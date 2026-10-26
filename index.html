@@ -129,8 +129,10 @@ p{margin:0}
 @media (max-width:860px){.meter .wrap{grid-template-columns:minmax(0,1fr)}.meter-note{max-width:none}}
 
 /* worries */
-.fears{display:flex;flex-wrap:wrap;gap:10px}
-.fears span{padding:10px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:600;font-size:15px}
+.fears{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fears span{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 20px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:clamp(16px,1.6vw,19px);line-height:1.4}
+@media (max-width:960px){.fears{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.fears{grid-template-columns:minmax(0,1fr)}.fears span{padding:13px 18px}}
 .steps3{counter-reset:s}
 .step3{position:relative;padding-top:8px}
 .step3 .num{font-size:15px;font-weight:700;color:var(--accent)}
