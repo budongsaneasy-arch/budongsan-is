@@ -345,6 +345,7 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
 .pop-news .hd{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pop-slide{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
 .pop-slide img{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.9);background:#fff}
+.pop-slide img.logo-fb{object-fit:contain;padding:24px 16px;box-sizing:border-box}
 .pop-slide .ct{font-size:23px;font-weight:800;line-height:1.3}
 .pop-slide .ar{color:var(--soft);font-size:15px}
 .pager{display:flex;align-items:center;justify-content:center;gap:14px}
@@ -362,6 +363,7 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
   .pop-news{padding:18px 20px;gap:12px}
   .pop-slide{display:grid;grid-template-columns:76px minmax(0,1fr);grid-template-rows:auto;column-gap:14px;row-gap:2px;text-align:left;align-items:center}
   .pop-slide img{width:76px;height:76px;border-width:3px;grid-row:1/span 4}
+  .pop-slide img.logo-fb{padding:13px 9px}
   .pop-slide .tag{justify-self:start}
   .pop-slide .ct{font-size:18px}
   .pop-news>p{display:none}
@@ -1292,7 +1294,7 @@ const GALLERY = [
   const today = () => new Date().toISOString().slice(0, 10);
   function renderSlide() {
     const n = news[idx];
-    $('#popSlide').innerHTML = `<img src="${esc(n.img || 'assets/img/logo.svg')}" alt="${esc(n.ceo)}"><span class="tag">${esc(n.badge || 'NEW')}</span><span class="ar">${esc(n.area)}</span><span class="ct">${esc(n.center)}</span><b>${esc(n.ceo)}</b>`;
+    $('#popSlide').innerHTML = `<img src="${esc(n.img || 'assets/img/logo.svg')}"${n.img ? '' : ' class="logo-fb"'} alt="${esc(n.ceo)}"><span class="tag">${esc(n.badge || 'NEW')}</span><span class="ar">${esc(n.area)}</span><span class="ct">${esc(n.center)}</span><b>${esc(n.ceo)}</b>`;
     $('#popIdx').textContent = `${idx + 1} / ${news.length}`;
     $('#popDots').innerHTML = news.map((_, i) => `<button type="button" aria-label="${i + 1}번째 소식" aria-current="${i === idx}" data-i="${i}"></button>`).join('');
     const multi = news.length > 1; $('#popPrev').hidden = !multi; $('#popNext').hidden = !multi;
