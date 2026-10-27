@@ -1266,9 +1266,17 @@ const GALLERY = [
   chips.innerHTML = ['전체'].concat(REGIONS).map((r) => `<button class="chip" type="button" data-r="${esc(r)}" aria-pressed="${r === '전체'}">${esc(r)} ${r === '전체' ? PARTNERS.length : PARTNERS.filter((p) => p.region === r).length}</button>`).join('');
   chips.addEventListener('click', (e) => { const b = e.target.closest('[data-r]'); if (!b) return; region = b.dataset.r; $$('.chip', chips).forEach((c) => c.setAttribute('aria-pressed', String(c === b))); renderP(); });
   $('#pq').addEventListener('input', (e) => { q = e.target.value.trim(); renderP(); });
+  /* 사무소 종류를 나타내는 말은 늘 아랫줄에 두어 카드마다 줄 수를 맞춥니다 (긴 것부터 찾습니다) */
+  const OFFICE_SUFFIX = ['공인중개사사무소', '부동산중개사무소', '중개사무소', '부동산중개'];
+  const officeLines = (name) => {
+    const s = String(name || '').trim();
+    const suf = OFFICE_SUFFIX.find((x) => s.endsWith(x));
+    const head = suf ? s.slice(0, s.length - suf.length).trim() : '';
+    return suf && head ? `${esc(head)}<br>${esc(suf)}` : esc(s);
+  };
   function renderP() {
     const list = PARTNERS.filter((p) => (region === '전체' || p.region === region) && (!q || (p.center + p.office + p.ceo + p.region).includes(q)));
-    $('#pgrid').innerHTML = list.map((p) => `<div class="pcard"><img src="${esc(p.img)}" alt="${esc(p.ceo)} 대표" loading="lazy" width="96" height="96"><span class="rg">${esc(p.region)}</span><b>${esc(p.center)}</b><span class="of">${esc(p.office)}</span><span class="pceo">${esc(p.ceo)} 대표</span><a href="${esc(p.intro || CONFIG.INTRO_URL)}" target="_blank" rel="noopener">소개글 보기</a></div>`).join('');
+    $('#pgrid').innerHTML = list.map((p) => `<div class="pcard"><img src="${esc(p.img)}" alt="${esc(p.ceo)} 대표" loading="lazy" width="96" height="96"><span class="rg">${esc(p.region)}</span><b>${esc(p.center)}</b><span class="of">${officeLines(p.office)}</span><span class="pceo">${esc(p.ceo)} 대표</span><a href="${esc(p.intro || CONFIG.INTRO_URL)}" target="_blank" rel="noopener">소개글 보기</a></div>`).join('');
     $('#pcount').textContent = `${region === '전체' ? '전체' : region} ${list.length}개 센터`;
     $('#pempty').hidden = list.length > 0;
   }
