@@ -349,6 +349,17 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
 .pop-slide{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
 .pop-slide img{width:140px;height:140px;border-radius:50%;object-fit:cover;object-position:50% 8%;border:4px solid rgba(255,255,255,.9);background:#fff}
 .pop-slide img.logo-fb{object-fit:contain;padding:24px 16px;box-sizing:border-box}
+/* 창업설명회 카드 — 중개사무소 사진을 배경으로 깔고 글자를 얹습니다 */
+.pop-news.evb{position:relative;isolation:isolate;background:var(--deep)}
+.pop-news.evb::before{content:"";position:absolute;inset:0;z-index:-2;background-image:var(--shot);background-size:cover;background-position:center 18%}
+.pop-news.evb::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(14,27,53,.74) 0%,rgba(14,27,53,.90) 40%,rgba(14,27,53,.97) 100%)}
+.pop-slide.ev{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:4px}
+.ev-d{font-size:31px;font-weight:800;line-height:1.18;text-align:center;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.ev-t{font-size:19px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.ev-meta{list-style:none;margin:12px 0 0;padding:14px 15px;display:flex;flex-direction:column;gap:8px;background:rgba(9,18,38,.46);border:1px solid rgba(255,255,255,.14);border-radius:13px}
+.ev-meta li{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;color:#D9E2F2;line-height:1.45}
+.ev-meta b{color:#fff;font-weight:700;flex:none;min-width:52px}
+.ev-cta{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:0 20px;border:0;border-radius:999px;background:var(--gold);color:var(--gold-ink);font-weight:800;font-size:15.5px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.3)}
 .pop-slide .ct{font-size:23px;font-weight:800;line-height:1.3}
 .pop-slide .ar{color:var(--soft);font-size:15px}
 .pager{display:flex;align-items:center;justify-content:center;gap:14px}
@@ -369,6 +380,8 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
   .pop-slide img.logo-fb{padding:13px 9px}
   .pop-slide .tag{justify-self:start}
   .pop-slide .ct{font-size:18px}
+  .pop-slide.ev{display:flex;text-align:left}
+  .ev-d{font-size:24px}.ev-t{font-size:16px}.ev-meta b{min-width:46px}
   .pop-news>p{display:none}
   .pager button{width:40px;height:40px}
   .pop-form{gap:10px}
@@ -1115,27 +1128,27 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
 
 <div class="pop" id="pop" role="dialog" aria-modal="true" aria-labelledby="popTitle" hidden>
   <div class="pop-box" id="popBox" tabindex="-1">
-    <div class="pop-news on-navy">
-      <div class="hd"><span style="display:flex;align-items:center;gap:8px"><span class="tag">NEW</span><b id="popTitle">부동산이즈 새 가족 소식</b></span><span id="popIdx" style="color:var(--soft);font-size:14px;font-variant-numeric:tabular-nums"></span></div>
+    <div class="pop-news on-navy" id="popNews">
+      <div class="hd"><span style="display:flex;align-items:center;gap:8px"><span class="tag" id="popTag">NEW</span><b id="popTitle">부동산이즈 새 가족 소식</b></span><span id="popIdx" style="color:var(--soft);font-size:14px;font-variant-numeric:tabular-nums"></span></div>
       <div class="pop-slide" id="popSlide" aria-live="polite"></div>
       <div class="pager"><button type="button" id="popPrev" aria-label="이전 소식"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><div class="dots" id="popDots"></div><button type="button" id="popNext" aria-label="다음 소식"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div>
-      <p style="text-align:center;font-weight:700;color:var(--accent-soft)">부동산 중개업 성공의 꿈! 다음은 당신입니다</p>
+      <p id="popTagline" style="text-align:center;font-weight:700;color:var(--accent-soft)">부동산 중개업 성공의 꿈! 다음은 당신입니다</p>
     </div>
     <div class="pop-form">
-      <span class="eyebrow">가맹 상담 신청</span>
-      <h2>나도 부동산이즈 대표가<br>되고 싶다면</h2>
-      <p style="color:var(--muted);font-size:15px">이름과 연락처만 남겨주세요. 담당자가 연락드립니다.</p>
+      <span class="eyebrow" id="popEyebrow">가맹 상담 신청</span>
+      <h2 id="popH2">나도 부동산이즈 대표가<br>되고 싶다면</h2>
+      <p id="popLead" style="color:var(--muted);font-size:15px">이름과 연락처만 남겨주세요. 담당자가 연락드립니다.</p>
       <form id="popForm" novalidate style="display:flex;flex-direction:column;gap:10px">
         <label class="sr" for="p-name">성함</label><input class="inp" id="p-name" name="name" autocomplete="name" placeholder="성함">
         <label class="sr" for="p-phone">휴대전화</label><input class="inp" id="p-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="휴대전화 (010-0000-0000)">
         <label class="sr" for="p-area">희망 지역 (선택)</label><input class="inp" id="p-area" name="area" placeholder="희망 지역 (선택, 예: 인천 계양구)">
         <input type="text" name="website" tabindex="-1" autocomplete="off" class="sr" aria-hidden="true">
         <div class="consent" style="padding:12px 14px;gap:6px;font-size:13px">
-          <p style="color:var(--muted)">수집 항목: 성함, 휴대전화 (선택: 희망 지역) · 목적: 가맹 상담 · 보유: <span data-cfg="retention">상담 종료 후 1년</span> · Google 클라우드에 보관. 동의를 거부하면 신청이 접수되지 않습니다. <a href="#privacy" data-close-pop>전문 보기</a></p>
+          <p style="color:var(--muted)">수집 항목: 성함, 휴대전화 (선택: 희망 지역) · 목적: <span id="popPurpose">가맹 상담</span> · 보유: <span data-cfg="retention">상담 종료 후 1년</span> · Google 클라우드에 보관. 동의를 거부하면 신청이 접수되지 않습니다. <a href="#privacy" data-close-pop>전문 보기</a></p>
           <label class="cbx" for="p-agree" style="font-size:14px"><input type="checkbox" id="p-agree" name="agree"><b>개인정보 수집·이용에 동의합니다 (필수)</b></label>
         </div>
         <p class="err-msg" id="popErr" role="alert" hidden style="font-size:14px"></p>
-        <button class="btn navy" type="submit">상담 신청하기</button>
+        <button class="btn navy" type="submit" id="popSubmit">상담 신청하기</button>
       </form>
       <div class="done" id="popDone" hidden style="padding:18px 0"><div class="ic" style="width:60px;height:60px"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div><b style="font-size:19px;color:var(--navy)" id="popDoneText"></b><p style="color:var(--muted);font-size:14px">담당자가 확인 후 순차적으로 연락드립니다.</p><p class="demo-note" id="popDemo" hidden>미리보기 화면이라 실제로 저장되지 않았습니다.</p></div>
     </div>
@@ -1300,17 +1313,50 @@ const GALLERY = [
   $('#againBtn').addEventListener('click', () => { lf.reset(); lf.hidden = false; $('#formDone').hidden = true; $('#f-name').focus(); });
 
   /* ---------- popup ---------- */
-  const pop = $('#pop'); let news = DEFAULT_NEWS.slice(), idx = 0;
+  const pop = $('#pop'), popNews = $('#popNews');
+  let news = DEFAULT_NEWS.slice(), slides = news.slice(), idx = 0;
+  const EV_SHOT = 'assets/img/store-neob-night.jpg';   // 설명회 카드 기본 배경 (시트의 '배경 사진'으로 바꿀 수 있습니다)
+  const POP_TEXT = {
+    news:  { tag: 'NEW', title: '부동산이즈 새 가족 소식', eyebrow: '가맹 상담 신청',
+             h2: '나도 부동산이즈 대표가<br>되고 싶다면', lead: '이름과 연락처만 남겨주세요. 담당자가 연락드립니다.',
+             purpose: '가맹 상담', submit: '상담 신청하기' },
+    event: { tag: '창업설명회', eyebrow: '창업설명회 참석 신청',
+             lead: '이름과 연락처만 남겨주세요. 담당자가 참석 안내를 드립니다.',
+             purpose: '설명회 참석 안내와 가맹 상담', submit: '설명회 신청하기' }
+  };
+  const isEvent = () => (slides[idx] || {}).kind === 'event';
+  const evRow = (k, v) => v ? `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>` : '';
   const today = () => new Date().toISOString().slice(0, 10);
   function renderSlide() {
-    const n = news[idx];
-    $('#popSlide').innerHTML = `<img src="${esc(n.img || 'assets/img/logo.svg')}"${n.img ? '' : ' class="logo-fb"'} alt="${esc(n.ceo)}"><span class="tag">${esc(n.badge || 'NEW')}</span><span class="ar">${esc(n.area)}</span><span class="ct">${esc(n.center)}</span><b>${esc(n.ceo)}</b>`;
-    $('#popIdx').textContent = `${idx + 1} / ${news.length}`;
-    $('#popDots').innerHTML = news.map((_, i) => `<button type="button" aria-label="${i + 1}번째 소식" aria-current="${i === idx}" data-i="${i}"></button>`).join('');
-    const multi = news.length > 1; $('#popPrev').hidden = !multi; $('#popNext').hidden = !multi;
+    const n = slides[idx] || {}, ev = n.kind === 'event', t = ev ? POP_TEXT.event : POP_TEXT.news;
+    popNews.classList.toggle('evb', ev);
+    popNews.style.setProperty('--shot', ev ? `url("${n.img || EV_SHOT}")` : 'none');
+    $('#popSlide').className = 'pop-slide' + (ev ? ' ev' : '');
+    $('#popSlide').innerHTML = ev
+      ? `<span class="ev-d">${esc(n.date)}</span><span class="ev-t">${esc(n.time)}</span>
+         <ul class="ev-meta">${evRow('장소', n.place)}${evRow('오시는 길', n.way)}${evRow('대상', n.target)}${evRow('참가비', n.fee)}</ul>
+         <button class="ev-cta" type="button" id="evCta">설명회 신청하기<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>`
+      : `<img src="${esc(n.img || 'assets/img/logo.svg')}"${n.img ? '' : ' class="logo-fb"'} alt="${esc(n.ceo)}"><span class="tag">${esc(n.badge || 'NEW')}</span><span class="ar">${esc(n.area)}</span><span class="ct">${esc(n.center)}</span><b>${esc(n.ceo)}</b>`;
+    $('#popTag').textContent = t.tag;
+    $('#popTitle').textContent = ev ? (n.title || '부동산이즈 창업설명회') : t.title;
+    $('#popTagline').hidden = ev;
+    $('#popEyebrow').textContent = t.eyebrow;
+    $('#popH2').innerHTML = ev ? `${esc(n.date)} 설명회에<br>참석하시겠어요?` : t.h2;
+    $('#popLead').textContent = t.lead;
+    $('#popPurpose').textContent = t.purpose;
+    $('#popSubmit').textContent = t.submit;
+    $('#popIdx').textContent = `${idx + 1} / ${slides.length}`;
+    $('#popDots').innerHTML = slides.map((_, i) => `<button type="button" aria-label="${i + 1}번째" aria-current="${i === idx}" data-i="${i}"></button>`).join('');
+    const multi = slides.length > 1; $('#popPrev').hidden = !multi; $('#popNext').hidden = !multi;
   }
-  $('#popPrev').addEventListener('click', () => { idx = (idx + news.length - 1) % news.length; renderSlide(); });
-  $('#popNext').addEventListener('click', () => { idx = (idx + 1) % news.length; renderSlide(); });
+  /* 설명회 카드의 '신청하기'를 누르면 옆(모바일에서는 아래)의 신청 칸으로 이동합니다 */
+  $('#popSlide').addEventListener('click', (e) => {
+    if (!e.target.closest('#evCta')) return;
+    const el = $('#p-name'); el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setTimeout(() => el.focus({ preventScroll: true }), 320);
+  });
+  $('#popPrev').addEventListener('click', () => { idx = (idx + slides.length - 1) % slides.length; renderSlide(); });
+  $('#popNext').addEventListener('click', () => { idx = (idx + 1) % slides.length; renderSlide(); });
   $('#popDots').addEventListener('click', (e) => { const b = e.target.closest('[data-i]'); if (b) { idx = +b.dataset.i; renderSlide(); } });
   let lastFocus = null;
   function openPop() { lastFocus = document.activeElement; pop.hidden = false; $('#reopen').hidden = true; setTimeout(() => { $('#popBox').focus({ preventScroll: true }); $('#popBox').scrollTop = 0; }, 30); }
@@ -1330,7 +1376,8 @@ const GALLERY = [
     else if (!$('#p-agree').checked) err = '개인정보 수집·이용에 동의해 주셔야 신청이 접수됩니다.';
     const em = $('#popErr'); if (err) { em.textContent = err; em.hidden = false; return; } em.hidden = true;
     try {
-      const r = await send({ form: '팝업 간편 신청', name: d.name.trim(), phone: d.phone.trim(), status: '팝업 간편 신청', area: (d.area || '').trim(), agree: true, marketing: false });
+      const ev = isEvent();   // 설명회 카드에서 넣은 신청은 시트에서 바로 구분됩니다
+      const r = await send({ form: ev ? '창업설명회 팝업' : '팝업 간편 신청', name: d.name.trim(), phone: d.phone.trim(), status: ev ? '창업설명회 신청' : '팝업 간편 신청', area: (d.area || '').trim(), agree: true, marketing: false });
       pf.hidden = true; $('#popDone').hidden = false; $('#popDoneText').textContent = `${d.name.trim()}님, 신청이 접수되었습니다.`; $('#popDemo').hidden = !r.demo;
     } catch (x) { em.textContent = '전송하지 못했습니다. 1877-4121로 전화 주세요.'; em.hidden = false; }
   });
@@ -1414,8 +1461,10 @@ const GALLERY = [
           if (!it.img) { const d = DEFAULT_NEWS.find((x) => x.center === it.center); if (d) it.img = d.img; }
           return it;
         });
-        idx = 0; renderSlide();
       }
+      /* 진행 중인 창업설명회가 있으면 맨 앞에 보여줍니다 */
+      const events = Array.isArray(j.events) ? j.events.map((e) => Object.assign({ kind: 'event' }, e)) : [];
+      slides = events.concat(news); idx = 0; renderSlide();
     } catch (x) { /* 시트를 못 읽으면 기본 소식 유지 */ }
   }
 
