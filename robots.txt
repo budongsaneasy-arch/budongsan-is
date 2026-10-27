@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.budongsanis.com/sitemap.xml
+Sitemap: https://budongsanis.com/sitemap.xml
