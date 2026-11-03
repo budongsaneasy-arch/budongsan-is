@@ -1,0 +1,57 @@
+<section class="route" id="r-contact" data-route="contact" hidden>
+  <div class="phero on-navy"><div class="wrap"><span class="eyebrow">사업설명회 · 가맹상담</span><h1>가맹상담 신청</h1><p class="lead">남겨주신 연락처로 담당자가 확인 후 순차적으로 연락드립니다. 작성은 1분이면 충분합니다.</p></div></div>
+  <section class="sec alt">
+    <div class="wrap form-grid">
+      <div class="fbox">
+        <form id="leadForm" novalidate>
+          <div class="fields">
+            <div class="fld"><label for="f-name">성함 <span class="req">*</span></label><input class="inp" id="f-name" name="name" autocomplete="name" required placeholder="홍길동"></div>
+            <div class="fld"><label for="f-phone">휴대전화 <span class="req">*</span></label><input class="inp" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="010-0000-0000"></div>
+            <div class="fld full"><span class="lbl" id="l-status">현재 상황 <span class="req">*</span></span>
+              <div class="seg" role="radiogroup" aria-labelledby="l-status">
+                <label><input type="radio" name="status" value="창업 준비중" id="f-st1"><b>창업 준비 중</b><small>신규 중개사무소</small></label>
+                <label><input type="radio" name="status" value="개업중(전환·이전)" id="f-st2"><b>개업 중</b><small>전환 · 이전 가입</small></label>
+                <label><input type="radio" name="status" value="정보만 먼저" id="f-st3"><b>정보만 먼저</b><small>아직 고민 중</small></label>
+              </div>
+            </div>
+            <div class="fld full"><label for="f-career">중개업 경력 유무</label><select class="inp" id="f-career" name="career"><option value="">선택해 주세요</option><option>경험없음</option><option>소속공인중개사</option><option>중개보조원</option></select></div>
+            <div class="fld"><label for="f-area">희망 지역 <span class="req">*</span></label><input class="inp" id="f-area" name="area" required placeholder="예: 서울 서초구 방배동"></div>
+            <div class="fld"><label for="f-when">창업 예상 시기</label><select class="inp" id="f-when" name="when"><option value="">선택해 주세요</option><option>3개월 이내</option><option>6개월 이내</option><option>1년 이내</option><option>미정</option></select></div>
+            <div class="fld"><label for="f-master">네오비 마스터 과정</label><select class="inp" id="f-master" name="master"><option value="">선택해 주세요</option><option>수료</option><option>수강 중</option><option>미수료</option></select></div>
+            <div class="fld"><label for="f-email">이메일</label><input class="inp" id="f-email" name="email" type="email" autocomplete="email" placeholder="선택 입력"></div>
+            <div class="fld full"><label for="f-source">부동산이즈를 알게 된 경로</label><select class="inp" id="f-source" name="source"><option value="">선택해 주세요</option><option>네오비TV (유튜브)</option><option>네이버 카페</option><option>네오비 교육 수강</option><option>지인 · 가맹점 소개</option><option>검색</option><option>기타</option></select></div>
+            <div class="fld full"><label for="f-msg">문의 내용</label><textarea class="inp" id="f-msg" name="message" placeholder="궁금한 점이나 희망하는 설명회 일정을 적어주세요."></textarea></div>
+            <input type="text" name="website" id="f-hp" tabindex="-1" autocomplete="off" class="sr" aria-hidden="true">
+            <div class="fld full">
+              <div class="consent" id="consentBox">
+                <b>개인정보 수집·이용 동의 (필수)</b>
+                <dl>
+                  <dt>수집 항목</dt><dd>성함, 휴대전화, 현재 상황, 희망 지역 (선택: 이메일, 창업 예상 시기, 마스터 과정 여부, 알게 된 경로, 문의 내용)</dd>
+                  <dt>이용 목적</dt><dd>가맹 상담, 사업설명회 일정 안내</dd>
+                  <dt>보유 기간</dt><dd><span data-cfg="retention">상담 종료 후 1년</span>, 이후 지체 없이 파기</dd>
+                </dl>
+                <p style="color:var(--muted)">동의를 거부할 수 있으며, 거부하시면 상담 신청이 접수되지 않습니다. 입력하신 정보는 Google의 클라우드에 보관됩니다. <a href="#privacy">개인정보처리방침 전문</a></p>
+                <label class="cbx" for="f-agree"><input type="checkbox" id="f-agree" name="agree"><span><b>위 내용을 읽었으며 개인정보 수집·이용에 동의합니다.</b></span></label>
+                <label class="cbx" for="f-mkt"><input type="checkbox" id="f-mkt" name="marketing"><span>(선택) 사업설명회 · 혜택 소식을 문자와 이메일로 받겠습니다.</span></label>
+              </div>
+            </div>
+            <p class="err-msg full" id="formErr" role="alert" hidden></p>
+            <button class="btn navy full" type="submit" id="submitBtn" style="min-height:58px;font-size:18px">상담 신청하기</button>
+          </div>
+        </form>
+        <div class="done" id="formDone" hidden tabindex="-1">
+          <div class="ic"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <h2 style="font-size:26px;color:var(--navy)">상담 신청이 접수되었습니다</h2>
+          <p id="doneText" style="color:var(--muted)"></p>
+          <p class="demo-note" id="demoNote" hidden>미리보기 화면입니다. 구글 시트와 연결하면 이 신청이 시트에 저장됩니다.</p>
+          <button class="btn line" type="button" id="againBtn">새로 작성하기</button>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="card dark on-navy"><span style="color:var(--soft)">전화로 바로 상담하기</span><div class="bigtel">1877-4121</div><p style="color:var(--soft)">유선상담 02-525-8020<br>상담 시간 <span data-cfg="hours">[상담 시간]</span></p></div>
+        <div class="card"><b style="font-size:18px;color:var(--navy)">신청 후 이렇게 진행됩니다</b><ol class="check" style="padding:0"><li>담당자가 연락드려 궁금한 점을 확인합니다</li><li>가까운 사업설명회 일정을 안내해 드립니다</li><li>설명회에서 가맹 조건과 혜택을 자세히 설명합니다</li></ol></div>
+        <div class="card"><b style="font-size:18px;color:var(--navy)">오시는 길</b><p>서울특별시 서초구 방배천로 18길 11, A상가 201호 (방배동, 방배롯데캐슬아르떼)</p></div>
+      </aside>
+    </div>
+  </section>
+</section>
