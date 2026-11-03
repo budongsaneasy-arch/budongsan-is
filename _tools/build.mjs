@@ -6,11 +6,22 @@
 // index.html, why/index.html … 은 전부 이 스크립트가 만들어 내는 결과물입니다. 직접 고치지 마세요.
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const SITE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://budongsanis.com';
 const read = (p) => fs.readFileSync(path.join(SITE, p), 'utf8');
+
+// 브라우저가 쓰는 것과 똑같은 데이터·카드 함수를 그대로 읽어 옵니다.
+// 카드 모양을 고칠 곳은 assets/data.js 한 곳뿐입니다.
+const ctx = vm.createContext({});
+vm.runInContext(
+  read('assets/data.js') +
+    '\n;globalThis.__D = { PARTNERS, REGIONS, FACULTY, VIDEOS, GALLERY, POSTS, CARDS, sortByPin };',
+  ctx
+);
+const D = ctx.__D;
 
 const layout = read('_src/layout.html');
 const { pages } = JSON.parse(read('_src/pages.json'));
@@ -55,15 +66,54 @@ const crumbs = (page) => ({
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
 
+// ── 목록을 미리 그려 넣기 ────────────────────────────────────
+// 자바스크립트가 채우던 칸을 빌드할 때 HTML 로 채웁니다. 구글·네이버가
+// 스크립트를 실행하지 않아도 사무소명·교수진·영상 제목을 바로 읽습니다.
+// 브라우저에서는 이미 채워진 칸을 다시 그리지 않습니다(assets/site.js 의 fill).
+const posts = D.sortByPin(D.POSTS);
+const chips = ['전체'].concat(D.REGIONS).map((r) =>
+  D.CARDS.regionChip(r, r === '전체', r === '전체' ? D.PARTNERS.length : D.PARTNERS.filter((p) => p.region === r).length)
+).join('');
+
+const GRIDS = {
+  homeVideos: [D.VIDEOS[0], D.VIDEOS[2], D.VIDEOS[1]].map(D.CARDS.video).join(''),
+  allVideos: D.VIDEOS.map(D.CARDS.video).join(''),
+  fgrid: D.FACULTY.map(D.CARDS.faculty).join(''),
+  gallery: D.GALLERY.map(D.CARDS.gallery).join(''),
+  regionChips: chips,
+  pgrid: D.PARTNERS.map(D.CARDS.partner).join(''),
+  pcount: `전체 ${D.PARTNERS.length}개 센터`,
+  newsList: posts.map(D.CARDS.news).join(''),
+  homeNews: posts.slice(0, 3).map(D.CARDS.news).join(''),
+};
+
+// <div id="pgrid"></div> 처럼 비어 있는 칸 안에 넣습니다
+const putInto = (html, id, inner) =>
+  html.replace(new RegExp(`(<(\\w+)[^>]*\\bid="${id}"[^>]*>)</\\2>`), (m, open, tag) => `${open}${inner}</${tag}>`);
+
+function prerender(html) {
+  let out = html;
+  let filled = [];
+  for (const [id, inner] of Object.entries(GRIDS)) {
+    const next = putInto(out, id, inner);
+    if (next !== out) { filled.push(id); out = next; }
+  }
+  // 인터뷰 영상 제목에 편수를 붙입니다
+  out = out.replace(/(<h2[^>]*\bid="vcount"[^>]*>)인터뷰 영상(<\/h2>)/,
+                    `$1인터뷰 영상 ${D.VIDEOS.length}편$2`);
+  return { html: out, filled };
+}
+
 let made = 0;
 for (const page of pages) {
   // 첫 조각만 펼치고 나머지(소식 페이지의 게시글 화면)는 접어 둡니다
-  const content = page.parts
+  const raw = page.parts
     .map((name, i) => {
       const frag = read(`_src/pages/${name}.html`).trim();
       return i === 0 ? frag.replace(/^(<section class="route"[^>]*?) hidden>/, '$1>') : frag;
     })
     .join('\n\n');
+  const { html: content, filled } = prerender(raw);
 
   const head = [
     page.noindex ? '<meta name="robots" content="noindex,follow">' : '',
@@ -87,7 +137,8 @@ for (const page of pages) {
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);
   made++;
-  console.log(`  ${(page.path ? '/' + page.path + '/' : '/').padEnd(12)} ${String(html.length).padStart(6)}자  ${page.title}`);
+  console.log(`  ${(page.path ? '/' + page.path + '/' : '/').padEnd(12)} ${String(html.length).padStart(6)}자  ${page.title}` +
+              (filled.length ? `\n${' '.repeat(22)}미리 그림: ${filled.join(', ')}` : ''));
 }
 
 // ── 사이트맵 ─────────────────────────────────────────────────
