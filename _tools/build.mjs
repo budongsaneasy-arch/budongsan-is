@@ -18,7 +18,7 @@ const read = (p) => fs.readFileSync(path.join(SITE, p), 'utf8');
 const ctx = vm.createContext({});
 vm.runInContext(
   read('assets/data.js') +
-    '\n;globalThis.__D = { PARTNERS, REGIONS, FACULTY, VIDEOS, GALLERY, POSTS, CARDS, sortByPin };',
+    '\n;globalThis.__D = { CONFIG, PARTNERS, REGIONS, FACULTY, VIDEOS, GALLERY, POSTS, CARDS, sortByPin };',
   ctx
 );
 const D = ctx.__D;
@@ -70,7 +70,26 @@ const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</
 // 자바스크립트가 채우던 칸을 빌드할 때 HTML 로 채웁니다. 구글·네이버가
 // 스크립트를 실행하지 않아도 사무소명·교수진·영상 제목을 바로 읽습니다.
 // 브라우저에서는 이미 채워진 칸을 다시 그리지 않습니다(assets/site.js 의 fill).
-const posts = D.sortByPin(D.POSTS);
+// 구글 시트에 적은 소식도 빌드할 때 가져와 미리 그려 넣습니다. 이렇게 하지 않으면
+// 방문자가 소식 화면을 열고 2초쯤 기다려야 글이 나타나고, 검색엔진은 아예 읽지 못합니다.
+// 가져오지 못하면 코드에 든 글만으로 만들고 그대로 진행합니다(빌드는 실패하지 않습니다).
+async function sheetPosts() {
+  const url = D.CONFIG && D.CONFIG.ENDPOINT;
+  if (!url) return [];
+  try {
+    const res = await fetch(url + '?type=posts', { signal: AbortSignal.timeout(20000) });
+    const j = await res.json();
+    const ids = new Set(D.POSTS.map((p) => p.id));
+    const got = (Array.isArray(j.items) ? j.items : []).filter((p) => p && p.id && p.title && !ids.has(p.id));
+    console.log(`  시트 소식 ${got.length}건을 함께 넣습니다.`);
+    return got;
+  } catch (e) {
+    console.log(`  ! 시트 소식을 가져오지 못했습니다 (${e.message}). 코드에 든 글만 넣습니다.`);
+    return [];
+  }
+}
+const posts = D.sortByPin(D.POSTS.concat(await sheetPosts()));
+const newsCats = ['전체'].concat(Array.from(new Set(posts.map((p) => p.cat || '소식'))));
 const chips = ['전체'].concat(D.REGIONS).map((r) =>
   D.CARDS.regionChip(r, r === '전체', r === '전체' ? D.PARTNERS.length : D.PARTNERS.filter((p) => p.region === r).length)
 ).join('');
@@ -83,6 +102,7 @@ const GRIDS = {
   regionChips: chips,
   pgrid: D.PARTNERS.map(D.CARDS.partner).join(''),
   pcount: `전체 ${D.PARTNERS.length}개 센터`,
+  newsFilter: newsCats.length > 2 ? newsCats.map((c) => D.CARDS.newsCat(c, c === '전체')).join('') : '',
   newsList: posts.map(D.CARDS.news).join(''),
   homeNews: posts.slice(0, 3).map(D.CARDS.news).join(''),
 };
