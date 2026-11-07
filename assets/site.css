@@ -420,6 +420,28 @@ textarea.inp{padding:12px 14px;min-height:120px;resize:vertical}
 .post-top h1{font-size:clamp(24px,3.4vw,36px);font-weight:800;color:var(--ink)}
 .post-body{max-width:820px;display:flex;flex-direction:column;gap:18px;font-size:17px;line-height:1.85}
 .post-body img{border-radius:var(--r);width:100%}
+/* 시트에 적은 소식 글 */
+.ps-hero{margin-bottom:4px}
+.ps-img{margin:4px 0}
+.ps-h{font-size:clamp(20px,2.3vw,25px);font-weight:800;color:var(--navy);line-height:1.4;margin-top:16px;padding-left:14px;border-left:4px solid var(--gold)}
+.ps-quote{margin:2px 0;padding:18px 22px;background:var(--ground);border-radius:var(--r);border-top:3px solid var(--navy);font-size:clamp(16px,1.9vw,19px);font-weight:700;color:var(--navy);text-align:center}
+.ps-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.ps-list li{position:relative;padding-left:27px}
+.ps-list li::before{content:"¹3";position:absolute;left:3px;top:1px;color:var(--accent);font-weight:800}
+.ps-info{margin:2px 0;display:grid;grid-template-columns:auto minmax(0,1fr);border-top:1px solid var(--line)}
+.ps-info dt{padding:13px 18px 13px 0;font-weight:700;color:var(--navy);white-space:nowrap;border-bottom:1px solid var(--line)}
+.ps-info dd{margin:0;padding:13px 0;border-bottom:1px solid var(--line)}
+.ps-nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:2px 0}
+.ps-num{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.ps-num b{display:block;color:var(--accent);font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.ps-num strong{display:block;margin:3px 0 7px;font-size:17px;color:var(--navy);line-height:1.4}
+.ps-num p{margin:0;font-size:15px;color:var(--muted);line-height:1.65}
+@media (max-width:640px){
+  .ps-nums{grid-template-columns:minmax(0,1fr)}
+  .ps-info{grid-template-columns:minmax(0,1fr)}
+  .ps-info dt{padding:13px 0 0;border-bottom:0}
+  .ps-info dd{padding:2px 0 13px}
+}
 .post-foot .wrap{padding-block:28px 56px;display:flex;justify-content:center}
 
 /* 현장 실습 게시글 */

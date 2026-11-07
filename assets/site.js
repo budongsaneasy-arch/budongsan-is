@@ -296,6 +296,81 @@ Analytics.load();
     if ($('#homeNews')) { $('#homeNews').closest('section').hidden = posts.length === 0; }
   }
   if ($('#newsFilter')) { $('#newsFilter').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (b) { cat = b.dataset.cat; renderPosts(); } }); }
+  /* 시트에 적은 글을 보기 좋게 그립니다. 줄 단위로 아래 표시를 알아봅니다.
+       ■ 제목      01. 번호 항목      "인용문"
+       · 라벨 : 값 (안내 표)          · 항목 (체크 목록)        [사진2] (그 자리에 사진) */
+  function postBodyHtml(p) {
+    const imgs = (Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])).filter(Boolean);
+    const used = new Set();
+    const pic = (i, cls) => (imgs[i] && !used.has(i) ? (used.add(i), `<img class="${cls}" src="${esc(imgs[i])}" alt="" loading="lazy">`) : '');
+
+    const out = [];
+    let nums = [], buf = [], bul = [];
+    const flushNums = () => { if (nums.length) { out.push(`<div class="ps-nums">${nums.join('')}</div>`); nums = []; } };
+    const flushText = () => { if (buf.length) { out.push(`<p>${buf.map(esc).join('<br>')}</p>`); buf = []; } };
+    const flushBul = () => {
+      if (!bul.length) return;
+      const items = bul; bul = [];
+      out.push(items.every((t) => / : /.test(t))
+        ? `<dl class="ps-info">${items.map((t) => {
+            const i = t.indexOf(' : ');
+            return `<dt>${esc(t.slice(0, i))}</dt><dd>${esc(t.slice(i + 3))}</dd>`;
+          }).join('')}</dl>`
+        : `<ul class="ps-list">${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`);
+    };
+    const flushAll = () => { flushText(); flushBul(); flushNums(); };
+
+    const isNum = (l) => /^\d{1,2}[.)]\s/.test(l);
+    const isBul = (l) => /^[·•▪-]\s/.test(l);
+
+    for (const raw of String(p.body || p.summary || '').replace(/\r\n/g, '\n').split(/\n{2,}/)) {
+      const lines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
+      let i = 0;
+      while (i < lines.length) {
+        const L = lines[i];
+
+        const mark = L.match(/^\[사진\s*(\d+)\]$/);
+        if (mark) { flushAll(); out.push(pic(+mark[1] - 1, 'ps-img')); i++; continue; }
+
+        if (L.startsWith('■')) {
+          flushAll();
+          out.push(`<h2 class="ps-h">${esc(L.replace(/^■\s*/, ''))}</h2>`);
+          i++; continue;
+        }
+
+        if (isNum(L)) {                                   // 01. 제목 + 이어지는 설명 줄
+          flushText(); flushBul();
+          const title = L.replace(/^\d{1,2}[.)]\s*/, '');
+          const no = L.match(/^(\d{1,2})/)[1];
+          const desc = [];
+          i++;
+          while (i < lines.length && !isNum(lines[i]) && !isBul(lines[i]) && !lines[i].startsWith('■')) { desc.push(lines[i]); i++; }
+          nums.push(`<div class="ps-num"><b>${esc(no)}</b><strong>${esc(title)}</strong>` +
+                    (desc.length ? `<p>${desc.map(esc).join('<br>')}</p>` : '') + '</div>');
+          continue;
+        }
+
+        if (isBul(L)) { flushText(); flushNums(); bul.push(L.replace(/^[·•▪-]\s*/, '')); i++; continue; }
+
+        if (/^["\u201C].*["\u201D]$/.test(L)) {           // "인용문"
+          flushAll();
+          out.push(`<blockquote class="ps-quote">${esc(L.replace(/^["\u201C]|["\u201D]$/g, ''))}</blockquote>`);
+          i++; continue;
+        }
+
+        flushBul(); flushNums();
+        buf.push(L); i++;
+      }
+      flushText(); flushBul();
+    }
+    flushAll();
+
+    const head = pic(0, 'ps-hero');
+    const rest = imgs.map((_, i) => pic(i, 'ps-img')).join('');
+    return head + out.join('') + rest +
+      (p.link ? `<p><a class="btn navy" href="${esc(p.link)}" target="_blank" rel="noopener">자세히 보기</a></p>` : '');
+  }
+
   function openPost(id) {
     if (!$('#postTitle')) return false;
     const p = posts.find((x) => x.id === id); if (!p) return false;
@@ -307,9 +382,7 @@ Analytics.load();
     const sh = $('#postSheet');
     if (found) { sh.hidden = true; }
     else {
-      const paras = String(p.body || p.summary || '').split(/\n{2,}|\r\n\r\n/).map((t) => `<p>${esc(t).replace(/\n/g, '<br>')}</p>`).join('');
-      $('#postSheetBody').innerHTML = (p.img ? `<img src="${esc(p.img)}" alt="" width="1200" height="675">` : '') + paras +
-        (p.link ? `<p><a class="btn navy" href="${esc(p.link)}" target="_blank" rel="noopener">자세히 보기</a></p>` : '');
+      $('#postSheetBody').innerHTML = postBodyHtml(p);
       sh.hidden = false;
     }
     return true;
