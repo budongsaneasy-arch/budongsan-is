@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const SITE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -22,6 +23,13 @@ vm.runInContext(
   ctx
 );
 const D = ctx.__D;
+
+// 자원 주소에 '판 번호'를 붙입니다. 파일이 바뀌면 번호도 바뀌므로, 방문자 브라우저가
+// 10분 동안 옛 디자인·동작을 그대로 쓰는 일이 없어집니다 (Ctrl+F5 안 눌러도 됩니다).
+const ASSETS = ['assets/site.css', 'assets/data.js', 'assets/site.js'];
+const stamp = Object.fromEntries(
+  ASSETS.map((f) => [f, crypto.createHash('sha1').update(read(f)).digest('hex').slice(0, 8)])
+);
 
 const layout = read('_src/layout.html');
 const { pages } = JSON.parse(read('_src/pages.json'));
@@ -156,6 +164,7 @@ for (const page of pages) {
     .replaceAll('{{DESC}}', esc(page.desc))
     .replaceAll('{{URL}}', urlOf(page.path));
 
+  for (const f of ASSETS) html = html.replaceAll(`"/${f}"`, `"/${f}?v=${stamp[f]}"`);
   html = linkify(html);
   // 현재 보고 있는 메뉴에 표시
   html = html.replace(`<a href="${href[page.route]}" data-nav="${page.route}">`,
