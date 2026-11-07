@@ -290,7 +290,7 @@ Analytics.load();
       posts = POSTS.concat(JSON.parse(seedEl.textContent).filter((p) => p && p.id && p.title && !ids.has(p.id)));
     }
   } catch (e) { /* 심어 둔 값이 깨졌으면 코드에 든 글만 씁니다 */ }
-  const sortPosts = () => { posts = sortByPin(posts); };
+  const sortPosts = () => { posts = sortNews(posts); };
   function renderPosts(first) {
     sortPosts();
     const cats = ['전체'].concat(Array.from(new Set(posts.map((p) => p.cat || '소식'))));

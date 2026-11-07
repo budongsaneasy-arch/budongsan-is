@@ -98,4 +98,6 @@ const CARDS = {
 };
 
 /* 게시글은 공지가 먼저, 그 다음 최신순 */
-const sortByPin = (list) => list.slice().sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || String(b.date).localeCompare(String(a.date)));
+/* 소식은 최신 글이 가장 먼저. 같은 날짜면 '상단 고정'한 글을 앞에 둡니다. */
+const sortNews = (list) => list.slice().sort((a, b) =>
+  String(b.date).localeCompare(String(a.date)) || (b.pin ? 1 : 0) - (a.pin ? 1 : 0));

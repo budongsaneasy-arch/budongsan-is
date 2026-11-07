@@ -18,7 +18,7 @@ const read = (p) => fs.readFileSync(path.join(SITE, p), 'utf8');
 const ctx = vm.createContext({});
 vm.runInContext(
   read('assets/data.js') +
-    '\n;globalThis.__D = { CONFIG, PARTNERS, REGIONS, FACULTY, VIDEOS, GALLERY, POSTS, CARDS, sortByPin };',
+    '\n;globalThis.__D = { CONFIG, PARTNERS, REGIONS, FACULTY, VIDEOS, GALLERY, POSTS, CARDS, sortNews };',
   ctx
 );
 const D = ctx.__D;
@@ -89,7 +89,7 @@ async function sheetPosts() {
   }
 }
 const extraPosts = await sheetPosts();
-const posts = D.sortByPin(D.POSTS.concat(extraPosts));
+const posts = D.sortNews(D.POSTS.concat(extraPosts));
 // 목록 모양(1단/2단)과 분류 버튼은 글 수에 따라 달라집니다. 브라우저가 구글 응답을
 // 기다리는 동안 1건 기준으로 잘못 그리지 않도록, 시트 소식을 페이지에 함께 심어 둡니다.
 const seedTag = extraPosts.length
