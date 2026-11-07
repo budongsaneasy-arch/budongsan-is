@@ -88,7 +88,14 @@ async function sheetPosts() {
     return [];
   }
 }
-const posts = D.sortByPin(D.POSTS.concat(await sheetPosts()));
+const extraPosts = await sheetPosts();
+const posts = D.sortByPin(D.POSTS.concat(extraPosts));
+// 목록 모양(1단/2단)과 분류 버튼은 글 수에 따라 달라집니다. 브라우저가 구글 응답을
+// 기다리는 동안 1건 기준으로 잘못 그리지 않도록, 시트 소식을 페이지에 함께 심어 둡니다.
+const seedTag = extraPosts.length
+  ? `
+<script type="application/json" id="seed-posts">${JSON.stringify(extraPosts).replace(/</g, '\u003c')}</script>`
+  : '';
 const newsCats = ['전체'].concat(Array.from(new Set(posts.map((p) => p.cat || '소식'))));
 const chips = ['전체'].concat(D.REGIONS).map((r) =>
   D.CARDS.regionChip(r, r === '전체', r === '전체' ? D.PARTNERS.length : D.PARTNERS.filter((p) => p.region === r).length)
@@ -133,7 +140,8 @@ for (const page of pages) {
       return i === 0 ? frag.replace(/^(<section class="route"[^>]*?) hidden>/, '$1>') : frag;
     })
     .join('\n\n');
-  const { html: content, filled } = prerender(raw);
+  let { html: content, filled } = prerender(raw);
+  if (/id="(newsList|homeNews)"/.test(content)) content += seedTag;
 
   const head = [
     page.noindex ? '<meta name="robots" content="noindex,follow">' : '',

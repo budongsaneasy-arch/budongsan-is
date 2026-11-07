@@ -281,6 +281,15 @@ Analytics.load();
 
   /* ---------- 부동산이즈 소식 (게시판) ---------- */
   let posts = POSTS.slice(), curPost = null, cat = '전체';
+  /* 빌드할 때 페이지에 심어 둔 시트 소식을 먼저 씁니다. 구글 응답(약 2초)을 기다리지 않아도
+     목록 배치와 분류 버튼이 처음부터 올바르게 그려집니다. */
+  try {
+    const seedEl = document.getElementById('seed-posts');
+    if (seedEl) {
+      const ids = new Set(POSTS.map((p) => p.id));
+      posts = POSTS.concat(JSON.parse(seedEl.textContent).filter((p) => p && p.id && p.title && !ids.has(p.id)));
+    }
+  } catch (e) { /* 심어 둔 값이 깨졌으면 코드에 든 글만 씁니다 */ }
   const sortPosts = () => { posts = sortByPin(posts); };
   function renderPosts(first) {
     sortPosts();
